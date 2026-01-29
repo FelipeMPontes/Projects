@@ -1,0 +1,49 @@
+Instrumentos de avaliação
+
+Como instrumentos de avaliação, utilizamos a ferramenta web Kahoot!, e questionários 
+durante a instalação dos laboratórios.
+
+	• Link para o questionário feito no Kahoot!:
+
+	https://create.kahoot.it/share/ocs-inventory-ng/46441682-780c-4e9b-b88c-e5871fb4529d
+
+	• Questões:
+
+1. Porque utilizamos o mySQL/MariaDB?
+R = Pois precisamos de uma base de dados para a aplicação funcionar.
+
+2. Quais as vantagens de utilizar OCS e não outras ferramenta similare?
+R = Open source, gratuíta, possibilita a integração com outras ferramentas 
+como o GLPI para abertura de chamados, gerir software e hardware de forma 
+automatizada e periódica.
+
+3. Quais tipos de empresas podem utilizar o OCS?
+Pág. 27
+R = Qualquer uma pode utilizar, mas a grande maioria não opta pelo OCS 
+por falta de suporte dedicado e imediato.
+
+4. Qual a função do agente e como se comunica com o servidor?
+R = O agente coleta informações do equipamento onde está instalado e 
+envia ao servidor através do protocolo HTTP ou HTTPS.
+
+5. O que significa a sigla OCS?
+R = Open Computer and Software.
+
+6. O que são as TAGs no OCS Inventory NG?
+R = São identificadores utilizados para organizar equipamentos como por 
+exemplo, tags para setores, localidades ou mesmo o tipo de equipamento.
+
+7. Como o OCS Inventory NG ajuda na gestão de licenças?
+R = Permitindo identificar os softwares instalados, comparar com licenças 
+adquiridas e identificar uso irregular.
+
+8. Quais as limitações do OCS Inventory NG?
+R = Interface simples, dependência do agente, suporte limitado, 
+necessidade de ajustes para performance em grandes ambientes.
+
+9. Quais informações a ferramenta coleta?
+R = Informações de hardware e softweare, como CPU, memória, placamãe, BIOS, periféricos, sistema operacional, programas instalados, versões etc.
+
+10. Quais os requisitos para instalação do servidor OCS Inventory NG?
+R = Necessário Linux ou Windows, servidor web Apache, PHP, banco de 
+dados MySQL/MariaDB e alguns extenções disponíveis no site oficial da ferramenta.
