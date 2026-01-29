@@ -1,0 +1,161 @@
+## Instalando dependencias.
+
+
+
+apt install wget perl curl gpg sudo perl apache2 cpanminus make gcc libapache2-mod-perl2 apache2-dev libsoap-lite-perl libapache2-mod-perl2-dev libdb-dev -y
+
+
+
+## Adicionando repositorio oficial do OCS Inventory no Debian 13
+
+
+
+echo "deb http://deb.ocsinventory-ng.org/debian/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ocsinventory.list
+
+
+## Copy public key:
+
+
+
+curl -fsSL https://deb.ocsinventory-ng.org/pubkey.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/ocs-archive-keyring.gpg
+
+
+
+## Atualizando repositorios.
+
+
+
+sudo apt update | sudo apt upgrade
+
+
+
+## Instalação de modulos perl para o funcionamento do OCS Inventory
+
+
+
+perl -MCPAN -e 'install qw(XML::Entities SOAP::Transport::HTTP Net::IP Apache::DBI Apache::DB)'
+
+
+
+## Validar instalação dos modulos acima
+
+
+
+perl -e '
+use XML::Entities;         print "XML::Entities        => $INC{\"XML/Entities.pm\"}\n";
+use SOAP::Transport::HTTP; print "SOAP::Transport::HTTP=> $INC{\"SOAP/Transport/HTTP.pm\"}\n";
+use Net::IP;               print "Net::IP              => $INC{\"Net/IP.pm\"}\n";
+use Apache::DBI;           print "Apache::DBI          => $INC{\"Apache/DBI.pm\"}\n";
+'
+
+
+## Desativa qualquer interação wizard no CLI SSH
+
+
+
+export DEBIAN_FRONTEND=noninteractive
+
+
+
+## Instalando o OCS Inventory via APT ##
+
+
+
+apt install ocsinventory-agent ocsinventory-server ocsinventory 
+
+
+
+
+## Altere a senha padrão do usuario de banco do OCS Inventory.
+
+
+
+sudo mysql -u root -p
+
+	CREATE USER 'ocs'@'localhost' IDENTIFIED BY 'ocs!atec';
+	FLUSH PRIVILEGES;
+	GRANT ALL PRIVILEGES ON ocsweb.* TO ‘ocs’@’localhost’;
+	EXIT;
+
+
+
+## Ajuste o PHP
+
+
+PHPVER="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+INI="/etc/php/${PHPVER}/apache2/php.ini"
+
+sudo sed -i -E \
+  -e 's|^[;[:space:]]*memory_limit[[:space:]]*=.*|memory_limit = 256M|' \
+  -e 's|^[;[:space:]]*post_max_size[[:space:]]*=.*|post_max_size = 100M|' \
+  -e 's|^[;[:space:]]*upload_max_filesize[[:space:]]*=.*|upload_max_filesize = 100M|' \
+  -e 's|^[;[:space:]]*max_execution_time[[:space:]]*=.*|max_execution_time = 360|' \
+  -e 's|^[;[:space:]]*date\.timezone[[:space:]]*=.*|date.timezone = Europe/Lisbon|' \
+  "$INI"
+
+
+## Altera usuario e senha do banco nos arquivos abaixo a senha do banco OCS
+
+
+nano -c /etc/apache2/conf-available/zz-ocsinventory-restapi.conf
+  $ENV{OCS_DB_PWD} = 'NOVA_SENHA_DEFINIDO_NO_PASSO_ACIMA';
+
+
+
+## Altera usuario e senha do banco nos arquivos abaixo a senha do banco OCS
+
+
+
+nano -c /etc/apache2/conf-available/z-ocsinventory-server.conf
+
+
+ -->  Dentro do ficheiro altere as inf. a seguir:
+
+
+  PerlSetVar OCS_DB_PWD ""NOVA_SENHA_DEFINIDO_NO_PASSO_ACIMA""
+
+  PerlSetEnv OCS_OPT_ACCEPT_TAG_UPDATE_FROM_CLIENT 0 -> ""1""
+
+
+
+## Altera usuario e senha do banco nos arquivos abaixo a senha do banco OCS
+
+
+
+nano -c /etc/ocsinventory-reports/dbconfig.inc.php
+	define('PSWD_BASE', 'NOVA_SENHA_DEFINIDO_NO_PASSO_ACIMA');
+
+	
+
+## Apos o termino do Wizard Web, remova o arquivo install.php.
+
+
+
+rm -rf /usr/share/ocsinventory-reports/ocsreports/install.php
+
+
+
+## Reinicie o apache e o sgbd mariadb para aplicar todas as configurações feitas acima.
+
+
+
+systemctl restart apache2 mariadb
+
+
+
+## Ativa novamente qualquer interação no CLI SSH
+
+
+
+unset DEBIAN_FRONTEND
+
+
+## Acesse a pagina do OCS no browser e faça o Wizard.##
+
+
+
+http://IP DO SERVER/ocsreports/install.php
+
+
+
+##-FIM-##
